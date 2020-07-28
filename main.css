@@ -59,8 +59,7 @@ button {
   padding: 8px 14px;
 }
 
-button:hover,
-button:focus {
+button:hover {
   background-color: var(--button-background-color-hover);
 }
 
