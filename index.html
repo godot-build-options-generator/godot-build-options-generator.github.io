@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Hugo Locurcio">
+  <meta name="description" content="Generate SCons options to compile custom export templates with size optimizations.">
+  <meta name="theme-color" content="#3d8fcc">
+  <title>Godot build options generator</title>
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="main.css">
+  <script defer src="thirdparty/alpine.min.js"></script>
+</head>
+<body>
+  <h1>Godot build options generator</h1>
+  <main x-data="buildOptionsGenerator()">
+    <div class="grid">
+      <div class="options">
+        <h2>Select options</h2>
+
+        <template x-for="(option, index) in options" :key="option.id">
+          <label style="display: block">
+            <input type="checkbox" x-model="option.enabled">
+            <span x-text="option.name"></span>
+          </label>
+        </template>
+      </div>
+
+      <div class="preview">
+        <h2>Resulting <code>custom.py</code></h2>
+
+        <textarea readonly x-html="generatedOptions()" x-ref="textarea" @click="$refs.textarea.select()"
+          style="width: 100%; height: 500px">
+        </textarea>
+
+        <div style="margin-top: 10px">
+          <button type="button" @click="downloadOptions()">Download</button>
+          <button type="button" @click="copyOptionsToClipboard()">Copy to clipboard</button>
+        </div>
+      </div class="preview">
+    </div>
+  </main>
+
+  <script>
+    function buildOptionsGenerator() {
+      return {
+        options: [
+          {
+            id: 'bullet',
+            name: 'Bullet',
+            description: 'Advanced 3D physics engine',
+            enabled: true,
+          },
+          {
+            id: 'gridmap',
+            name: 'GridMap',
+            description: '3D tilemap system',
+            enabled: true,
+          },
+        ],
+
+        // Returns the generated output file as a string.
+        // NOTE: This is displayed into a `x-html` directive so that line
+        // breaks display as expected. Make sure to escape HTML tags and
+        // validate user input to avoid XSS vulnerabilities!
+        generatedOptions() {
+          generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
+
+          this.options.forEach((option) => {
+            generated += `module_${option.id}_enabled=${option.enabled ? 'yes' : 'no'}\n`;
+          })
+
+          return generated;
+        },
+
+        downloadOptions() {
+          // TODO
+        },
+
+        copyOptionsToClipboard() {
+          // TODO
+        },
+      };
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+:root {
+  --body-background-color: hsl(0, 0%, 100%);
+  --body-color: hsl(0, 0%, 25%);
+  --link-color: hsl(210, 90%, 50%);
+  --textarea-background-color: hsl(0, 0%, 95%);
+  --button-background-color: hsl(0, 0%, 92.5%);
+  --button-background-color-hover: hsl(0, 0%, 87.5%);
+  --button-background-color-active: hsl(0, 0%, 80%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --body-background-color: hsl(0, 0%, 20%);
+    --body-color: hsl(0, 0%, 85%);
+    --link-color: hsl(210, 100%, 80%);
+    --textarea-background-color: hsl(0, 0%, 25%);
+    --button-background-color: hsl(0, 0%, 30%);
+    --button-background-color-hover: hsl(0, 0%, 37.5%);
+    --button-background-color-active: hsl(0, 0%, 25%);
+  }
+}
+
+body {
+  background-color: var(--body-background-color);
+  color: var(--body-color);
+  /* Use a modern font stack inspired by Bootstrap 4. */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+h1,
+p {
+  text-align: center;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+textarea {
+  color: var(--body-color);
+  background-color: var(--textarea-background-color);
+  font-size: 14px;
+  padding: 6px;
+}
+
+button {
+  background-color: var(--button-background-color);
+  color: var(--body-color);
+  border: none;
+  border-radius: 3px;
+  padding: 8px 14px;
+}
+
+button:hover,
+button:focus {
+  background-color: var(--button-background-color-hover);
+}
+
+button:active {
+  background-color: var(--button-background-color-active);
+}
+
+@media (min-width: 720px) {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
