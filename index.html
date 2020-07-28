@@ -13,15 +13,29 @@
 </head>
 <body>
   <h1>Godot build options generator</h1>
+  <p>
+    This tool generates SCons options to build smaller export templates.
+    See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a
+      build for size</a> in the Godot documentation for more information.
+  </p>
+  <p>
+    <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list modules
+    that are only compiled in editor builds.
+  </p>
+
   <main x-data="buildOptionsGenerator()">
     <div class="grid">
       <div class="options">
-        <h2>Select options</h2>
+        <h2>Select modules</h2>
 
         <template x-for="(option, index) in options" :key="option.id">
-          <label style="display: block">
+          <label
+            style="display: block; margin-bottom: 10px; padding: 5px 10px; border-radius: 3px; background-color: hsla(0, 0%, 50%, 0.1)">
             <input type="checkbox" x-model="option.enabled">
             <span x-text="option.name"></span>
+            <!-- Visually align the description with the name. -->
+            <span x-text="option.description" style="display: block; margin-left: 30px; opacity: 0.75">
+            </span>
           </label>
         </template>
       </div>
@@ -46,15 +60,205 @@
       return {
         options: [
           {
-            id: 'bullet',
-            name: 'Bullet',
-            description: 'Advanced 3D physics engine',
+            id: 'arkit',
+            name: 'ARKit',
+            description: 'Required for AR/VR support on iOS. Has no effect on other platforms.',
+            enabled: true,
+          },
+          // 'assimp' isn't included as it's editor-only.
+          // 'basis_universal' isn't included as it's editor-only.
+          {
+            id: 'bmp',
+            name: 'BMP',
+            description: 'Required to load BMP images.',
             enabled: true,
           },
           {
+            id: 'bullet',
+            name: 'Bullet',
+            description: 'Advanced 3D physics engine (GodotPhysics is always compiled in).',
+            enabled: true,
+          },
+          {
+            id: 'camera',
+            name: 'Camera',
+            description: 'AR/VR camera support (unrelated to Camera nodes).',
+            enabled: true,
+          },
+          {
+            id: 'csg',
+            name: 'CSG',
+            description: 'Required to use Constructive Solid Geometry nodes.',
+            enabled: true,
+          },
+          // 'cvtt' isn't included as 'basis_universal' (which depends on it) isn't included either.
+          {
+            id: 'dds',
+            name: 'DDS',
+            description: 'Required to load DirectDraw Surface images.',
+            enabled: true,
+          },
+          // 'denoise' isn't included as it's editor-only.
+          {
+            id: 'enet',
+            name: 'ENet',
+            description: 'Required to use NetworkedMultiplayerENet and NetworkedMultiplayerPeer.',
+            enabled: true,
+          },
+          {
+            id: 'etc',
+            name: 'ETC1',
+            description: 'Required to compress textures in ETC1 format (editor only).',
+            enabled: true,
+          },
+          {
+            id: 'freetype',
+            name: 'FreeType',
+            description: 'Required to render DynamicFonts. Bitmap fonts can still be used without FreeType.',
+            enabled: true,
+          },
+          {
+            id: 'gdnative',
+            name: 'GDNative',
+            description: 'Required to load GDNative libraries.',
+            enabled: true,
+          },
+          {
+            id: 'gdnavigation',
+            name: 'GDNavigation',
+            description: 'Required to use NavigationServer.',
+            enabled: true,
+          },
+          {
+            id: 'gdscript',
+            name: 'GDScript',
+            description: 'Required to run scripts written in GDScript.',
+            enabled: true,
+          },
+          // 'glslang' not included as it's critical for the engine to work.
+          {
             id: 'gridmap',
             name: 'GridMap',
-            description: '3D tilemap system',
+            description: 'Required to use GridMap nodes.',
+            enabled: true,
+          },
+          {
+            id: 'hdr',
+            name: 'HDR',
+            description: 'Required to load Radiance HDR images.',
+            enabled: true,
+          },
+          {
+            id: 'jpg',
+            name: 'JPG',
+            description: 'Required to load JPEG images.',
+            enabled: true,
+          },
+          {
+            id: 'jsonrpc',
+            name: 'JSON-RPC',
+            description: 'Required to use the JSONRPC class.',
+            enabled: true,
+          },
+          // 'lightmapper_rd' isn't included as it's editor-only.
+          {
+            id: 'mbedtls',
+            name: 'mbedTLS',
+            description: 'Required to make HTTPS requests.',
+            enabled: true,
+          },
+          {
+            id: 'mobile_vr',
+            name: 'Mobile VR',
+            description: 'Required to use VR on Android and iOS.',
+            enabled: true,
+          },
+          {
+            id: 'mono',
+            name: 'Mono',
+            description: 'Required to run scripts written in C#.',
+            enabled: false,
+          },
+          {
+            id: 'ogg',
+            name: 'OGG',
+            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `stb_vorbis` and `vorbis`.',
+            enabled: true,
+          },
+          {
+            id: 'opensimplex',
+            name: 'OpenSimplex',
+            description: 'Required to use OpenSimplexNoise and NoiseTextures that rely on it.',
+            enabled: true,
+          },
+          {
+            id: 'opus',
+            name: 'Opus',
+            description: 'Required to play WebM (VP9) videos with sound in VideoPlayer.',
+            enabled: true,
+          },
+          // 'pvr' isn't included as it's editor-only.
+          {
+            id: 'regex',
+            name: 'RegEx',
+            description: 'Required to use the RegEx class.',
+            enabled: true,
+          },
+          // 'squish' isn't included as it's editor-only.
+          {
+            id: 'stb_vorbis',
+            name: 'stb_vorbis',
+            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer.',
+            enabled: true,
+          },
+          // 'svg' isn't included as it's editor-only.
+          {
+            id: 'tga',
+            name: 'TGA',
+            description: 'Required to load TrueVision Targa images.',
+            enabled: true,
+          },
+          {
+            id: 'theora',
+            name: 'Theora',
+            description: 'Required to play back Ogg Theora videos in VideoPlayer.',
+            enabled: true,
+          },
+          {
+            id: 'tinyexr',
+            name: 'TinyEXR',
+            description: 'Required to load EXR images.',
+            enabled: true,
+          },
+          {
+            id: 'upnp',
+            name: 'UPnP',
+            description: 'Required to use the UPNP classes for network discovery and automatic port forwarding.',
+            enabled: true,
+          },
+          // 'vhacd' isn't included as it's editor-only.
+          {
+            id: 'visual_script',
+            name: 'VisualScript',
+            description: 'Required to run scripts made using VisualScript.',
+            enabled: true,
+          },
+          {
+            id: 'vorbis',
+            name: 'Vorbis',
+            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `ogg`.',
+            enabled: true,
+          },
+          {
+            id: 'webm',
+            name: 'WebM',
+            description: 'Required to play WebM (VP8 and VP9) videos in VideoPlayer. See also `ogg` and `vorbis`.',
+            enabled: true,
+          },
+          {
+            id: 'webp',
+            name: 'WebP',
+            description: 'Required to load WebP images.',
             enabled: true,
           },
         ],
@@ -67,7 +271,7 @@
           generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
 
           this.options.forEach((option) => {
-            generated += `module_${option.id}_enabled=${option.enabled ? 'yes' : 'no'}\n`;
+            generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
           })
 
           return generated;

@@ -25,13 +25,13 @@ body {
   color: var(--body-color);
   /* Use a modern font stack inspired by Bootstrap 4. */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px;
+  padding: 0 20px;
+  line-height: 1.5;
 }
 
-h1,
-p {
+h1 {
   text-align: center;
 }
 
@@ -68,9 +68,16 @@ button:active {
   background-color: var(--button-background-color-active);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 800px) {
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+  }
+
+  .preview {
+    position: fixed;
+    left: calc(50% + 20px);
+    width: calc(50% - 60px);
   }
 }
