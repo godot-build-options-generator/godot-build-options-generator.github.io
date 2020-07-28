@@ -4,8 +4,8 @@
   --link-color: hsl(210, 90%, 50%);
   --textarea-background-color: hsl(0, 0%, 95%);
   --button-background-color: hsl(0, 0%, 92.5%);
-  --button-background-color-hover: hsl(0, 0%, 87.5%);
-  --button-background-color-active: hsl(0, 0%, 80%);
+  --button-background-color-hover: hsl(0, 0%, 85%);
+  --button-background-color-active: hsl(0, 0%, 77.5%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,4 +80,25 @@ button:active {
     left: calc(50% + 20px);
     width: calc(50% - 60px);
   }
+}
+
+label {
+  /* Prevent selecting the text when double-clicking. */
+  user-select: none;
+}
+
+.option-label {
+  display: block;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 3px;
+  background-color: var(--button-background-color);
+}
+
+.option-label:hover {
+  background-color: var(--button-background-color-hover);
+}
+
+.option-label:active {
+  background-color: var(--button-background-color-active);
 }

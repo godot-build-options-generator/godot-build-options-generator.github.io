@@ -29,8 +29,7 @@
         <h2>Select modules</h2>
 
         <template x-for="(option, index) in options" :key="option.id">
-          <label
-            style="display: block; margin-bottom: 10px; padding: 5px 10px; border-radius: 3px; background-color: hsla(0, 0%, 50%, 0.1)">
+          <label class="option-label">
             <input type="checkbox" x-model="option.enabled">
             <span x-text="option.name"></span>
             <!-- Visually align the description with the name. -->
