@@ -346,7 +346,7 @@
           generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
 
           this.options.forEach((option) => {
-            if (option.enabled != option.default){
+            if (option.enabled !== option.default) {
               if (option.notmodule != undefined) {
                 if (option.id == "optimize") {
                     generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
