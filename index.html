@@ -17,12 +17,13 @@
       <div class="options">
         <h1>Godot build options generator</h1>
         <p>
-        This tool generates SCons custom option files to build smaller export templates. After downloading a
-        <code>custom.py</code> file, place it at the root of your Godot source repository and compile export templates for
-        the platforms you need. After doing this, you'll only have to specify the <code>platform=&lt;platform&gt;</code>
-        option on the SCons command line.
-        See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a
-            build for size</a> in the Godot documentation for more information.
+        This tool generates SCons custom option files to build smaller export templates.
+        After downloading a <code>custom.py</code> file, place it at the root of your
+        Godot source repository and compile export templates for the platforms you need.
+        Once this is done, you'll only have to specify the
+        <code>platform=&lt;platform&gt; target=release</code> options on the SCons command line.
+        See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a build for size</a>
+        in the Godot documentation for more information.
         </p>
         <p>
           <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list modules
