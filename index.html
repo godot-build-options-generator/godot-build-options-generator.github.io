@@ -12,30 +12,29 @@
   <script defer src="thirdparty/alpine.min.js"></script>
 </head>
 <body>
-  <aside>
-    <h1>Godot build options generator</h1>
-    <p>
-	  This tool generates SCons custom option files to build smaller export templates. After downloading a
-	  <code>custom.py</code> file, place it at the root of your Godot source repository and compile export templates for
-	  the platforms you need. After doing this, you'll only have to specify the <code>platform=&lt;platform&gt;</code>
-	  option on the SCons command line.
-	  See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a
-	      build for size</a> in the Godot documentation for more information.
-    </p>
-    <p>
-      <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list modules
-	    that are only compiled in editor builds.
-    </p>
-  </aside>
   <main x-data="buildOptionsGenerator()">
     <div class="grid">
       <div class="options">
-        <h2>Select modules</h2>
+        <h1>Godot build options generator</h1>
+        <p>
+        This tool generates SCons custom option files to build smaller export templates. After downloading a
+        <code>custom.py</code> file, place it at the root of your Godot source repository and compile export templates for
+        the platforms you need. After doing this, you'll only have to specify the <code>platform=&lt;platform&gt;</code>
+        option on the SCons command line.
+        See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a
+            build for size</a> in the Godot documentation for more information.
+        </p>
+        <p>
+          <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list modules
+          that are only compiled in editor builds.
+        </p>
+
+        <h2>Select options and modules</h2>
 
         <template x-for="(option, index) in options" :key="option.id">
           <label class="option-label">
             <input type="checkbox" x-model="option.enabled">
-            <span x-text="option.name" :style="`font-weight: ${option.enabled ? 'bold' : 'normal'}`"></span>
+            <span x-text="!option.notmodule ? `Enable module: ${option.name}` : option.name" :style="`font-weight: ${option.enabled ? 'bold' : 'normal'}`"></span>
             <!-- Visually align the description with the name. -->
             <span x-text="option.description" style="display: block; margin-left: 30px; opacity: 0.65">
             </span>
@@ -65,42 +64,35 @@
           {
             id: "disable_3d",
             name: "Disable 3D",
-            description: "Disable 3D nodes for a smaller executable",
+            description: "Disable 3D nodes for a smaller binary.",
             enabled: false,
             notmodule: true,
           },
           {
             id: "optimize",
-            name: "Optimize For Size",
-            description: "Optimize for size instead of speed",
+            name: "Optimize for size",
+            description: "Optimize for size instead of speed.",
             enabled: false,
             notmodule: true,
           },
           {
             id: "disable_advanced_gui",
-            name: "Disable Advanced GUI",
-            description: "Disable advanced GUI nodes and behaviors",
+            name: "Disable advanced GUI",
+            description: "Disable advanced GUI nodes and behaviors such as Tree and GraphEdit.",
             enabled: false,
             notmodule: true,
           },
           {
             id: "deprecated",
-            name: "Enable Deprecated",
-            description: "Enable deprecated features",
+            name: "Enable deprecated features",
+            description: "Disabling deprecated features can make the binary slightly smaller.",
             enabled: true,
             notmodule: true,
           },
           {
             id: "minizip",
-            name: "Minizip",
-            description: "Enable ZIP archive support using minizip",
-            enabled: "true",
-            notmodule: true,
-          },
-          {
-            id: "debug_symbols",
-            name: "Add Debug Symbols",
-            description: "Add debugging symbols to release builds",
+            name: "Enable Minizip",
+            description: "Required to run projects that use data packed into a ZIP archive instead of a PCK.",
             enabled: "true",
             notmodule: true,
           },

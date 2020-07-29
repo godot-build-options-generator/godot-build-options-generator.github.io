@@ -67,15 +67,6 @@ button:active {
   background-color: var(--button-background-color-active);
 }
 
-aside {
-  max-width: 35rem;
-  display: inline-block;
-}
-
-main {
-  margin-bottom: 1rem;
-}
-
 @media (min-width: 800px) {
   .grid {
     display: grid;
@@ -87,7 +78,7 @@ main {
     position: fixed;
     left: calc(50% + 20px);
     width: calc(50% - 60px);
-    bottom: 1.6rem;
+    top: 1.6rem;
   }
 }
 
