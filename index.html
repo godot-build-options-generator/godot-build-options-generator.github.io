@@ -67,6 +67,7 @@
             name: "Disable 3D",
             description: "Disable 3D nodes for a smaller binary.",
             enabled: false,
+            default: false,
             notmodule: true,
           },
           {
@@ -74,6 +75,7 @@
             name: "Optimize for size",
             description: "Optimize for size instead of speed.",
             enabled: false,
+            default: false,
             notmodule: true,
           },
           {
@@ -81,6 +83,7 @@
             name: "Disable advanced GUI",
             description: "Disable advanced GUI nodes and behaviors such as Tree and GraphEdit.",
             enabled: false,
+            default: false,
             notmodule: true,
           },
           {
@@ -88,13 +91,15 @@
             name: "Enable deprecated features",
             description: "Disabling deprecated features can make the binary slightly smaller.",
             enabled: true,
+            default: true,
             notmodule: true,
           },
           {
             id: "minizip",
             name: "Enable Minizip",
             description: "Required to run projects that use data packed into a ZIP archive instead of a PCK.",
-            enabled: "true",
+            enabled: true,
+            default: true,
             notmodule: true,
           },
           {
@@ -102,6 +107,7 @@
             name: 'ARKit',
             description: 'Required for AR/VR support on iOS. Has no effect on other platforms.',
             enabled: true,
+            default: true,
           },
           // 'assimp' isn't included as it's editor-only.
           // 'basis_universal' isn't included as it's editor-only.
@@ -110,24 +116,28 @@
             name: 'BMP',
             description: 'Required to load BMP images.',
             enabled: true,
+            default: true,
           },
           {
             id: 'bullet',
             name: 'Bullet',
             description: 'Advanced 3D physics engine (GodotPhysics is always compiled in).',
             enabled: true,
+            default: true,
           },
           {
             id: 'camera',
             name: 'Camera',
             description: 'AR/VR camera support (unrelated to Camera nodes).',
             enabled: true,
+            default: true,
           },
           {
             id: 'csg',
             name: 'CSG',
             description: 'Required to use Constructive Solid Geometry nodes.',
             enabled: true,
+            default: true,
           },
           // 'cvtt' isn't included as 'basis_universal' (which depends on it) isn't included either.
           {
@@ -135,6 +145,7 @@
             name: 'DDS',
             description: 'Required to load DirectDraw Surface images.',
             enabled: true,
+            default: true,
           },
           // 'denoise' isn't included as it's editor-only.
           {
@@ -142,36 +153,42 @@
             name: 'ENet',
             description: 'Required to use NetworkedMultiplayerENet and NetworkedMultiplayerPeer.',
             enabled: true,
+            default: true,
           },
           {
             id: 'etc',
             name: 'ETC1',
             description: 'Required to compress textures in ETC1 format (editor only).',
             enabled: true,
+            default: true,
           },
           {
             id: 'freetype',
             name: 'FreeType',
             description: 'Required to render DynamicFonts. Bitmap fonts can still be used without FreeType.',
             enabled: true,
+            default: true,
           },
           {
             id: 'gdnative',
             name: 'GDNative',
             description: 'Required to load GDNative libraries.',
             enabled: true,
+            default: true,
           },
           {
             id: 'gdnavigation',
             name: 'GDNavigation',
             description: 'Required to use NavigationServer.',
             enabled: true,
+            default: true,
           },
           {
             id: 'gdscript',
             name: 'GDScript',
             description: 'Required to run scripts written in GDScript.',
             enabled: true,
+            default: true,
           },
           // 'glslang' not included as it's critical for the engine to work.
           {
@@ -179,24 +196,28 @@
             name: 'GridMap',
             description: 'Required to use GridMap nodes.',
             enabled: true,
+            default: true,
           },
           {
             id: 'hdr',
             name: 'HDR',
             description: 'Required to load Radiance HDR images.',
             enabled: true,
+            default: true,
           },
           {
             id: 'jpg',
             name: 'JPG',
             description: 'Required to load JPEG images.',
             enabled: true,
+            default: true,
           },
           {
             id: 'jsonrpc',
             name: 'JSON-RPC',
             description: 'Required to use the JSONRPC class.',
             enabled: true,
+            default: true,
           },
           // 'lightmapper_rd' isn't included as it's editor-only.
           {
@@ -204,36 +225,42 @@
             name: 'mbedTLS',
             description: 'Required to make HTTPS requests.',
             enabled: true,
+            default: true,
           },
           {
             id: 'mobile_vr',
             name: 'Mobile VR',
             description: 'Required to use VR on Android and iOS.',
             enabled: true,
+            default: true,
           },
           {
             id: 'mono',
             name: 'Mono',
             description: 'Required to run scripts written in C#.',
             enabled: false,
+            default: false,
           },
           {
             id: 'ogg',
             name: 'OGG',
             description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `stb_vorbis` and `vorbis`.',
             enabled: true,
+            default: true,
           },
           {
             id: 'opensimplex',
             name: 'OpenSimplex',
             description: 'Required to use OpenSimplexNoise and NoiseTextures that rely on it.',
             enabled: true,
+            default: true,
           },
           {
             id: 'opus',
             name: 'Opus',
             description: 'Required to play WebM (VP9) videos with sound in VideoPlayer.',
             enabled: true,
+            default: true,
           },
           // 'pvr' isn't included as it's editor-only.
           {
@@ -241,6 +268,7 @@
             name: 'RegEx',
             description: 'Required to use the RegEx class.',
             enabled: true,
+            default: true,
           },
           // 'squish' isn't included as it's editor-only.
           {
@@ -248,6 +276,7 @@
             name: 'stb_vorbis',
             description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer.',
             enabled: true,
+            default: true,
           },
           // 'svg' isn't included as it's editor-only.
           {
@@ -255,24 +284,28 @@
             name: 'TGA',
             description: 'Required to load TrueVision Targa images.',
             enabled: true,
+            default: true,
           },
           {
             id: 'theora',
             name: 'Theora',
             description: 'Required to play back Ogg Theora videos in VideoPlayer.',
             enabled: true,
+            default: true,
           },
           {
             id: 'tinyexr',
             name: 'TinyEXR',
             description: 'Required to load EXR images.',
             enabled: true,
+            default: true,
           },
           {
             id: 'upnp',
             name: 'UPnP',
             description: 'Required to use the UPNP classes for network discovery and automatic port forwarding.',
             enabled: true,
+            default: true,
           },
           // 'vhacd' isn't included as it's editor-only.
           {
@@ -280,24 +313,28 @@
             name: 'VisualScript',
             description: 'Required to run scripts made using VisualScript.',
             enabled: true,
+            default: true,
           },
           {
             id: 'vorbis',
             name: 'Vorbis',
             description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `ogg`.',
             enabled: true,
+            default: true,
           },
           {
             id: 'webm',
             name: 'WebM',
             description: 'Required to play WebM (VP8 and VP9) videos in VideoPlayer. See also `ogg` and `vorbis`.',
             enabled: true,
+            default: true,
           },
           {
             id: 'webp',
             name: 'WebP',
             description: 'Required to load WebP images.',
             enabled: true,
+            default: true,
           },
         ],
 
@@ -309,14 +346,16 @@
           generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
 
           this.options.forEach((option) => {
-            if (option.notmodule != undefined) {
-              if (option.id == "optimize") {
-                  generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
-                } else {
-                  generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
-                }
-            } else {
-              generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
+            if (option.enabled !== option.default) {
+              if (option.notmodule != undefined) {
+                if (option.id === "optimize") {
+                    generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
+                  } else {
+                    generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
+                  }
+              } else {
+                generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
+              }
             }
           })
 
