@@ -348,7 +348,7 @@
           this.options.forEach((option) => {
             if (option.enabled !== option.default) {
               if (option.notmodule != undefined) {
-                if (option.id == "optimize") {
+                if (option.id === "optimize") {
                     generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
                   } else {
                     generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
