@@ -62,6 +62,48 @@
       return {
         options: [
           {
+            id: "disable_3d",
+            name: "Disable 3D",
+            description: "Disable 3D nodes for a smaller executable",
+            enabled: false,
+            notmodule: true,
+          },
+          {
+            id: "optimize",
+            name: "Optimize For Size",
+            description: "Optimize for size instead of speed",
+            enabled: false,
+            notmodule: true,
+          },
+          {
+            id: "disable_advanced_gui",
+            name: "Disable Advanced GUI",
+            description: "Disable advanced GUI nodes and behaviors",
+            enabled: false,
+            notmodule: true,
+          },
+          {
+            id: "deprecated",
+            name: "Enable Deprecated",
+            description: "Enable deprecated features",
+            enabled: true,
+            notmodule: true,
+          },
+          {
+            id: "minizip",
+            name: "Minizip",
+            description: "Enable ZIP archive support using minizip",
+            enabled: "true",
+            notmodule: true,
+          },
+          {
+            id: "debug_symbols",
+            name: "DebugSymbols",
+            description: "Add debugging symbols to release builds",
+            enabled: "true",
+            notmodule: true,
+          },
+          {
             id: 'arkit',
             name: 'ARKit',
             description: 'Required for AR/VR support on iOS. Has no effect on other platforms.',
@@ -273,7 +315,15 @@
           generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
 
           this.options.forEach((option) => {
-            generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
+            if (option.notmodule != undefined) {
+              if (option.id == "optimize") {
+                  generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
+                } else {
+                  generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
+                }
+            } else {
+              generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
+            }
           })
 
           return generated;
