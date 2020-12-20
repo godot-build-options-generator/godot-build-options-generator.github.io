@@ -1,7 +1,7 @@
 :root {
   --body-background-color: hsl(0, 0%, 100%);
   --body-color: hsl(0, 0%, 25%);
-  --link-color: hsl(210, 90%, 50%);
+  --link-color: hsl(200, 50%, 35%);
   --textarea-background-color: hsl(0, 0%, 95%);
   --button-background-color: hsl(0, 0%, 92.5%);
   --button-background-color-hover: hsl(0, 0%, 85%);
@@ -10,13 +10,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --body-background-color: hsl(0, 0%, 20%);
-    --body-color: hsl(0, 0%, 85%);
-    --link-color: hsl(210, 100%, 80%);
-    --textarea-background-color: hsl(0, 0%, 25%);
-    --button-background-color: hsl(0, 0%, 30%);
-    --button-background-color-hover: hsl(0, 0%, 37.5%);
-    --button-background-color-active: hsl(0, 0%, 25%);
+    --body-background-color: hsl(180, 5%, 15%);
+    --body-color: hsl(0, 0%, 80%);
+    --link-color: hsl(200, 50%, 60%);
+    --textarea-background-color: hsl(180, 5%, 22.5%);
+    --button-background-color: hsl(180, 5%, 27.5%);
+    --button-background-color-hover: hsl(180, 5%, 33%);
+    --button-background-color-active: hsl(180, 5%, 22.5%);
   }
 }
 
