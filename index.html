@@ -162,13 +162,7 @@
             enabled: true,
             default: true,
           },
-          {
-            id: 'etc',
-            name: 'ETC1',
-            description: 'Required to compress textures in ETC1 format (editor only).',
-            enabled: true,
-            default: true,
-          },
+          // 'etc' isn't included as it's editor-only.
           {
             id: 'freetype',
             name: 'FreeType',
@@ -184,20 +178,13 @@
             default: true,
           },
           {
-            id: 'gdnavigation',
-            name: 'GDNavigation',
-            description: 'Required to use NavigationServer.',
-            enabled: true,
-            default: true,
-          },
-          {
             id: 'gdscript',
             name: 'GDScript',
             description: 'Required to run scripts written in GDScript.',
             enabled: true,
             default: true,
           },
-          // 'glslang' not included as it's critical for the engine to work.
+          // 'gltf' not included as it's editor-only.
           {
             id: 'gridmap',
             name: 'GridMap',
@@ -235,6 +222,13 @@
             default: true,
           },
           {
+            id: 'minimp3',
+            name: 'minimp3',
+            description: 'Required to play back MP3 sounds in AudioStreamPlayer.',
+            enabled: true,
+            default: true,
+          },
+          {
             id: 'mobile_vr',
             name: 'Mobile VR',
             description: 'Required to use VR on Android and iOS.',
@@ -249,16 +243,16 @@
             default: false,
           },
           {
-            id: 'ogg',
-            name: 'OGG',
-            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `stb_vorbis` and `vorbis`.',
+            id: 'navigation',
+            name: 'Navigation',
+            description: 'Required to use NavigationServer.',
             enabled: true,
             default: true,
           },
           {
-            id: 'minimp3',
-            name: 'minimp3',
-            description: 'Required to play back MP3 sounds in AudioStreamPlayer.',
+            id: 'ogg',
+            name: 'OGG',
+            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `stb_vorbis` and `vorbis`.',
             enabled: true,
             default: true,
           },
@@ -277,6 +271,7 @@
             default: true,
           },
           // 'pvr' isn't included as it's editor-only.
+          // 'raycast' isn't included as it's editor-only.
           {
             id: 'regex',
             name: 'RegEx',
@@ -343,13 +338,29 @@
             enabled: true,
             default: true,
           },
+          // 'webp' isn't included as it's critical for the engine to work since 3.4.
           {
-            id: 'webp',
-            name: 'WebP',
-            description: 'Required to load WebP images.',
+            id: 'webrtc',
+            name: 'WebRTC',
+            description: 'Required to use WebRTC connections.',
             enabled: true,
             default: true,
           },
+          {
+            id: 'websocket',
+            name: 'WebSocket',
+            description: 'Required to use WebSocket connections.',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'webxr',
+            name: 'WebXR',
+            description: 'Required to run AR/VR on browsers.',
+            enabled: true,
+            default: true,
+          },
+          // 'xatlas_unwrap' isn't included as it's editor-only.
         ],
 
         // Returns the generated output file as a string.
