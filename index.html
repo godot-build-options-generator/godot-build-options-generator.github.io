@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -70,6 +71,14 @@
       return {
         options: [
           {
+            id: "production",
+            name: "Production",
+            description: "Set defaults to build Godot for use in production.",
+            enabled: false,
+            default: false,
+            notmodule: true,
+          },
+          {
             id: "disable_3d",
             name: "Disable 3D",
             description: "Disable 3D nodes for a smaller binary.",
@@ -109,15 +118,14 @@
             default: true,
             notmodule: true,
           },
+          // 'astcenc' (4.x only) isn't included as it's editor-only.
           {
-            id: 'arkit',
-            name: 'ARKit',
-            description: 'Required for AR/VR support on iOS. Has no effect on other platforms.',
+            id: 'basis_universal',
+            name: 'Basis Universal',
+            description: 'Required to load textures imported as Basis Universal (4.x only).',
             enabled: true,
             default: true,
           },
-          // 'assimp' isn't included as it's editor-only.
-          // 'basis_universal' isn't included as it's editor-only.
           {
             id: 'bmp',
             name: 'BMP',
@@ -128,7 +136,7 @@
           {
             id: 'bullet',
             name: 'Bullet',
-            description: 'Advanced 3D physics engine (GodotPhysics is always compiled in).',
+            description: 'Advanced 3D physics engine (GodotPhysics is always compiled in, 3.x only).',
             enabled: true,
             default: true,
           },
@@ -162,7 +170,7 @@
             enabled: true,
             default: true,
           },
-          // 'etc' isn't included as it's editor-only.
+          // 'etc'/'etcpak' isn't included as it's editor-only.
           {
             id: 'freetype',
             name: 'FreeType',
@@ -173,7 +181,7 @@
           {
             id: 'gdnative',
             name: 'GDNative',
-            description: 'Required to load GDNative libraries.',
+            description: 'Required to load GDNative libraries (3.x only).',
             enabled: true,
             default: true,
           },
@@ -184,7 +192,14 @@
             enabled: true,
             default: true,
           },
-          // 'gltf' not included as it's editor-only.
+          // 'glslang' (4.x only) isn't included as it's critical for the engine to work.
+          {
+            id: 'gltf',
+            name: 'GLTF',
+            description: 'Required to load non-imported GLTF files. (Editor only in 3.x)',
+            enabled: true,
+            default: true,
+          },
           {
             id: 'gridmap',
             name: 'GridMap',
@@ -213,11 +228,19 @@
             enabled: true,
             default: true,
           },
-          // 'lightmapper_rd' isn't included as it's editor-only.
+          // 'lightmapper_cpu' (3.x only) isn't included as it's editor-only.
+          // 'lightmapper_rd' (4.x only) isn't included as it's editor-only.
           {
             id: 'mbedtls',
             name: 'mbedTLS',
             description: 'Required to make HTTPS requests.',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'meshoptimizer',
+            name: 'Mesh Optimizer',
+            description: 'Required for optimized SurfaceTool usage (4.x only).',
             enabled: true,
             default: true,
           },
@@ -243,6 +266,13 @@
             default: false,
           },
           {
+            id: 'msdfgen',
+            name: 'MSDFGen',
+            description: 'Required to use Multichannel Signed Distance Fields on fonts (4.x only).',
+            enabled: true,
+            default: true,
+          },
+          {
             id: 'navigation',
             name: 'Navigation',
             description: 'Required to use NavigationServer.',
@@ -250,27 +280,54 @@
             default: true,
           },
           {
+            id: 'multiplayer',
+            name: 'Multiplayer',
+            description: 'Required to use the multiplayer replication system (4.x only).',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'noise',
+            name: 'Noise',
+            description: 'Required to use Noise, FastNoiseLite and NoiseTextures that rely on it (4.x only).',
+            enabled: true,
+            default: true,
+          },
+          {
             id: 'ogg',
             name: 'OGG',
-            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `stb_vorbis` and `vorbis`.',
+            description: 'Required by `vorbis`. Required to play WebM (VP8) videos with sound in VideoPlayer (3.x only). See also `stb_vorbis`.',
             enabled: true,
             default: true,
           },
           {
             id: 'opensimplex',
             name: 'OpenSimplex',
-            description: 'Required to use OpenSimplexNoise and NoiseTextures that rely on it.',
+            description: 'Required to use OpenSimplexNoise and NoiseTextures that rely on it (3.x only).',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'openxr',
+            name: 'OpenXR',
+            description: 'Required to use OpenXR (4.x only).',
             enabled: true,
             default: true,
           },
           {
             id: 'opus',
             name: 'Opus',
-            description: 'Required to play WebM (VP9) videos with sound in VideoPlayer.',
+            description: 'Required to play WebM (VP9) videos with sound (3.x only).',
             enabled: true,
             default: true,
           },
-          // 'pvr' isn't included as it's editor-only.
+          {
+            id: 'pvr',
+            name: 'PVR',
+            description: 'Required to load textures imported as PVRTC (3.x only).',
+            enabled: true,
+            default: true,
+          },
           // 'raycast' isn't included as it's editor-only.
           {
             id: 'regex',
@@ -279,15 +336,41 @@
             enabled: true,
             default: true,
           },
-          // 'squish' isn't included as it's editor-only.
           {
-            id: 'stb_vorbis',
-            name: 'stb_vorbis',
-            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer.',
+            id: 'squish',
+            name: 'Squish',
+            description: 'Required to decompress images compressed with Squish (including S3TC VRAM compression).',
             enabled: true,
             default: true,
           },
-          // 'svg' isn't included as it's editor-only.
+          {
+            id: 'stb_vorbis',
+            name: 'stb_vorbis',
+            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer (3.x only). Does not require `ogg` or `vorbis`.',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'svg',
+            name: 'SVG',
+            description: 'Required to load non-imported SVG images as raster.',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'text_server_adv',
+            name: 'Text Server Advanced',
+            description: 'Required to use TextServerAdvanced, which is the default TextServer (4.x only).',
+            enabled: true,
+            default: true,
+          },
+          {
+            id: 'text_server_fb',
+            name: 'Text Server Fallback',
+            description: 'Required to use TextServerFallback (4.x only).',
+            enabled: false,
+            default: false,
+          },
           {
             id: 'tga',
             name: 'TGA',
@@ -298,17 +381,11 @@
           {
             id: 'theora',
             name: 'Theora',
-            description: 'Required to play back Ogg Theora videos in VideoPlayer.',
+            description: 'Required to play back Ogg Theora videos in VideoStreamPlayer/VideoPlayer.',
             enabled: true,
             default: true,
           },
-          {
-            id: 'tinyexr',
-            name: 'TinyEXR',
-            description: 'Required to load EXR images.',
-            enabled: true,
-            default: true,
-          },
+          // 'tinyexr' isn't included as it's editor-only.
           {
             id: 'upnp',
             name: 'UPnP',
@@ -316,25 +393,31 @@
             enabled: true,
             default: true,
           },
-          // 'vhacd' isn't included as it's editor-only.
+          {
+            id: 'vhacd',
+            name: 'V-HACD',
+            description: 'Required to create convex shapes in Mesh at runtime.',
+            enabled: true,
+            default: true,
+          },
           {
             id: 'visual_script',
             name: 'VisualScript',
-            description: 'Required to run scripts made using VisualScript.',
+            description: 'Required to run scripts made using VisualScript (3.x only).',
             enabled: true,
             default: true,
           },
           {
             id: 'vorbis',
             name: 'Vorbis',
-            description: 'Required to play WebM (VP8) videos with sound in VideoPlayer. See also `ogg`.',
+            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer (4.x only, not required on 3.x). Required to play WebM (VP8) videos with sound in VideoPlayer (3.x only). See also `ogg`.',
             enabled: true,
             default: true,
           },
           {
             id: 'webm',
             name: 'WebM',
-            description: 'Required to play WebM (VP8 and VP9) videos in VideoPlayer. See also `ogg` and `vorbis`.',
+            description: 'Required to play WebM (VP8 and VP9) videos in VideoPlayer (3.x only). See also `ogg`, `vorbis` and `opus`.',
             enabled: true,
             default: true,
           },
