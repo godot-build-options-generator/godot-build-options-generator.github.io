@@ -12,22 +12,25 @@
   <link rel="stylesheet" href="main.css">
   <script defer src="thirdparty/alpine.min.js"></script>
 </head>
+
 <body>
   <main x-data="buildOptionsGenerator()">
     <div class="grid">
       <div class="options">
         <h1>Godot build options generator</h1>
         <p>
-        This tool generates SCons custom option files to build smaller export templates.
-        After downloading a <code>custom.py</code> file, place it at the root of your
-        Godot source repository and compile export templates for the platforms you need.
-        Once this is done, you'll only have to specify the
-        <code>platform=&lt;platform&gt; target=release</code> options on the SCons command line.
-        See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing a build for size</a>
-        in the Godot documentation for more information.
+          This tool generates SCons custom option files to build smaller export templates.
+          After downloading a <code>custom.py</code> file, place it at the root of your
+          Godot source repository and compile export templates for the platforms you need.
+          Once this is done, you'll only have to specify the
+          <code>platform=&lt;platform&gt; target=release</code> options on the SCons command line.
+          See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing
+            a build for size</a>
+          in the Godot documentation for more information.
         </p>
         <p>
-          <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list modules
+          <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list
+          modules
           that are only compiled in editor builds.
         </p>
 
@@ -36,10 +39,12 @@
         <template x-for="(option, index) in options" :key="option.id">
           <label class="option-label">
             <input type="checkbox" x-model="option.enabled">
-            <span x-text="!option.notmodule ? `Enable module: ${option.name}` : option.name" :style="`font-weight: ${option.enabled ? 'bold' : 'normal'}`"></span>
+            <span x-text="!option.notmodule ? `Enable module: ${option.name}` : option.name"
+              :style="`font-weight: ${option.enabled ? 'bold' : 'normal'}`"></span>
             <!-- Visually align the description with the name. -->
             <span x-text="option.description" style="display: block; margin-left: 30px; opacity: 0.65">
             </span>
+            <input x-show="option.text & option.enabled" type="text" x-model="option.value">
           </label>
         </template>
       </div>
@@ -70,6 +75,14 @@
     function buildOptionsGenerator() {
       return {
         options: [
+          {
+            id: "extra_suffix",
+            name: "Extra Suffix",
+            description: 'Changed the "custom_build" suffix. Useful for adding your "game_title" to a build',
+            text: true,
+            value: "custom_build",
+            default: "custom_build",
+          },
           {
             id: "production",
             name: "Production",
@@ -443,6 +456,14 @@
             enabled: true,
             default: true,
           },
+          {
+            id: "custom_modules",
+            name: "Custom Module Path",
+            description: 'Addes a path for your custom models. Useful for keeping custom modules seperate from the Godot repo.',
+            text: true,
+            value: "",
+            default: "",
+          },
           // 'xatlas_unwrap' isn't included as it's editor-only.
         ],
 
@@ -454,13 +475,18 @@
           generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
 
           this.options.forEach((option) => {
-            if (option.enabled !== option.default) {
+            if (option.text) {
+              if (option.value != option.default && option.enabled) {
+                generated += `${option.id} = "${option.value}"\n`
+              }
+            }
+            else if (option.enabled !== option.default) {
               if (option.notmodule != undefined) {
                 if (option.id === "optimize") {
-                    generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
-                  } else {
-                    generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
-                  }
+                  generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
+                } else {
+                  generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
+                }
               } else {
                 generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
               }
@@ -490,4 +516,5 @@
     }
   </script>
 </body>
+
 </html>
