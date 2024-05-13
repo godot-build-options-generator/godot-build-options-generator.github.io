@@ -1,522 +1,619 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Hugo Locurcio" />
+    <meta
+      name="description"
+      content="Generate SCons options to compile custom export templates with size optimizations."
+    />
+    <meta name="theme-color" content="#3d8fcc" />
+    <title>Godot build options generator</title>
+    <link rel="icon" href="favicon.png" />
+    <link rel="stylesheet" href="main.css" />
+    <script defer src="thirdparty/alpine.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Hugo Locurcio">
-  <meta name="description" content="Generate SCons options to compile custom export templates with size optimizations.">
-  <meta name="theme-color" content="#3d8fcc">
-  <title>Godot build options generator</title>
-  <link rel="icon" href="favicon.png">
-  <link rel="stylesheet" href="main.css">
-  <script defer src="thirdparty/alpine.min.js"></script>
-</head>
+  <body>
+    <main x-data="buildOptionsGenerator()">
+      <div class="grid">
+        <div class="options">
+          <h1>Godot build options generator</h1>
+          <em style="opacity: 0.7"
+            >Last updated for <strong>Godot 4.2.x</strong>. This generator may
+            work with other Godot versions, but certain options may not have an
+            effect.</em
+          >
+          <p>
+            This tool generates SCons custom option files to build smaller
+            export templates. After downloading a <code>custom.py</code> file,
+            place it at the root of your Godot source repository and compile
+            export templates for the platforms you need. Once this is done,
+            you'll only have to specify the
+            <code>platform=&lt;platform&gt; target=release</code> options on the
+            SCons command line. See
+            <a
+              href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html"
+              >Optimizing a build for size</a
+            >
+            in the Godot documentation for more information.
+          </p>
+          <p>
+            <strong>Note:</strong> Since this tool is dedicated to building
+            smaller export templates, it doesn't list modules that are only
+            compiled in editor builds.
+          </p>
 
-<body>
-  <main x-data="buildOptionsGenerator()">
-    <div class="grid">
-      <div class="options">
-        <h1>Godot build options generator</h1>
-        <p>
-          This tool generates SCons custom option files to build smaller export templates.
-          After downloading a <code>custom.py</code> file, place it at the root of your
-          Godot source repository and compile export templates for the platforms you need.
-          Once this is done, you'll only have to specify the
-          <code>platform=&lt;platform&gt; target=release</code> options on the SCons command line.
-          See <a href="https://docs.godotengine.org/en/latest/development/compiling/optimizing_for_size.html">Optimizing
-            a build for size</a>
-          in the Godot documentation for more information.
-        </p>
-        <p>
-          <strong>Note:</strong> Since this tool is dedicated to building smaller export templates, it doesn't list
-          modules
-          that are only compiled in editor builds.
-        </p>
+          <h2>Select options and modules</h2>
 
-        <h2>Select options and modules</h2>
+          <template x-for="(option, index) in options" :key="option.id">
+            <label class="option-label">
+              <input type="checkbox" x-model="option.enabled" />
+              <span
+                x-text="!option.notModule ? `Enable module: ${option.name}` : option.name"
+                :style="`font-weight: ${option.enabled ? '700' : '400'}`"
+              ></span>
+              <!-- Visually align the description with the name. -->
+              <span
+                x-text="option.description"
+                style="display: block; margin-left: 30px; opacity: 0.65"
+              >
+              </span>
+              <input
+                x-show="option.text & option.enabled"
+                type="text"
+                x-model="option.value"
+              />
+            </label>
+          </template>
+        </div>
 
-        <template x-for="(option, index) in options" :key="option.id">
-          <label class="option-label">
-            <input type="checkbox" x-model="option.enabled">
-            <span x-text="!option.notmodule ? `Enable module: ${option.name}` : option.name"
-              :style="`font-weight: ${option.enabled ? 'bold' : 'normal'}`"></span>
-            <!-- Visually align the description with the name. -->
-            <span x-text="option.description" style="display: block; margin-left: 30px; opacity: 0.65">
-            </span>
-            <input x-show="option.text & option.enabled" type="text" x-model="option.value">
-          </label>
-        </template>
+        <div class="preview">
+          <h2>Resulting <code>custom.py</code></h2>
+
+          <textarea
+            readonly
+            x-html="generatedOptions()"
+            x-ref="textarea"
+            @click="$refs.textarea.select()"
+            style="width: 100%; height: 500px"
+          >
+          </textarea>
+
+          <div style="margin-top: 10px">
+            <button type="button" @click="downloadOptions()">Download</button>
+            <button type="button" @click="copyOptionsToClipboard()">
+              Copy to clipboard
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="preview">
-        <h2>Resulting <code>custom.py</code></h2>
+      <footer style="margin: 2rem 0 4rem 0; opacity: 0.8; text-align: center">
+        © 2020-present Hugo Locurcio and contributors<br />
+        <a
+          href="https://github.com/godot-build-options-generator/godot-build-options-generator.github.io"
+        >
+          Contribute to this generator on GitHub!
+        </a>
+      </footer>
+    </main>
 
-        <textarea readonly x-html="generatedOptions()" x-ref="textarea" @click="$refs.textarea.select()"
-          style="width: 100%; height: 500px">
-        </textarea>
+    <script>
+      function buildOptionsGenerator() {
+        return {
+          options: [
+            {
+              id: "extra_suffix",
+              name: "Extra suffix",
+              description:
+                'Changes the "custom_build" suffix. Useful for adding your "game_title" to a build.',
+              text: true,
+              value: "custom_build",
+              default: "custom_build",
+              notModule: true,
+            },
+            {
+              id: "production",
+              name: "Production",
+              description: "Set defaults to build Godot for use in production.",
+              enabled: false,
+              default: false,
+              notModule: true,
+            },
+            {
+              id: "disable_3d",
+              name: "Disable 3D",
+              description: "Disable 3D nodes for a smaller binary.",
+              enabled: false,
+              default: false,
+              notModule: true,
+            },
+            {
+              id: "optimize",
+              name: "Optimize for size",
+              description:
+                "Optimize the compiled binary for size instead of speed.",
+              enabled: false,
+              default: false,
+              notModule: true,
+            },
+            // TODO: Uncomment when Godot 4.3 is released.
+            // {
+            //   id: "threads",
+            //   name: "Enable threading support",
+            //   description:
+            //     "Disabling this removes SharedArrayBuffer and cross-origin isolation requirements for web exports.",
+            //   enabled: true,
+            //   default: true,
+            //   notModule: true,
+            // },
+            {
+              id: "precision",
+              name: "Enable double-precision floats",
+              description:
+                "Increase precision for large-scale worlds. This has a performance impact and requires GDExtensions specifically compiled for it (i.e. its ABI is not compatible with single-precision builds).",
+              enabled: false,
+              default: false,
+              notModule: true,
+            },
+            {
+              id: "disable_advanced_gui",
+              name: "Disable advanced GUI",
+              description:
+                "Disable advanced GUI nodes and behaviors such as Tree and GraphEdit.",
+              enabled: false,
+              default: false,
+              notModule: true,
+            },
+            {
+              id: "deprecated",
+              name: "Enable deprecated features",
+              description:
+                "Disabling deprecated features can make the binary slightly smaller.",
+              enabled: true,
+              default: true,
+              notModule: true,
+            },
+            {
+              id: "minizip",
+              name: "Enable Minizip",
+              description:
+                "Required to use the ZIPReader and ZIPWriter classes. Also required to run projects that use data packed in a ZIP archive instead of a PCK.",
+              enabled: true,
+              default: true,
+              notModule: true,
+            },
+            {
+              id: "brotli",
+              name: "Enable Brotli",
+              description:
+                "Required to use Brotli (de)compression. Also required to use fonts in the WOFF2 format.",
+              enabled: true,
+              default: true,
+              notModule: true,
+            },
+            {
+              id: "vulkan",
+              name: "Enable Vulkan",
+              description:
+                "Required to use the Forward+ and Mobile rendering methods with Vulkan.",
+              enabled: true,
+              default: true,
+              notModule: true,
+            },
+            {
+              id: "opengl3",
+              name: "Enable OpenGL",
+              description:
+                "Required to use the Compatibility rendering method with OpenGL 3.3/OpenGL ES 3.0/WebGL 2.0.",
+              enabled: true,
+              default: true,
+              notModule: true,
+            },
+            // TODO: Uncomment when Godot 4.3 is released.
+            // {
+            //   id: "d3d12",
+            //   name: "Enable Direct3D 12",
+            //   description:
+            //     "Required to use Forward+ and Mobile rendering methods with Direct3D 12 (only effective when targeting Windows). If enabled, run `misc/scripts/install_d3d12_sdk_windows.py` in the Godot repository to set up dependencies before compiling.",
+            //   enabled: false,
+            //   default: false,
+            //   notModule: true,
+            // },
+            // "astcenc" isn't included as it's editor-only.
+            {
+              id: "basis_universal",
+              name: "Basis Universal",
+              description:
+                "Required to load textures imported as Basis Universal.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "bmp",
+              name: "BMP",
+              description: "Required to load BMP images.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "camera",
+              name: "Camera",
+              description:
+                "Required for webcam support (unrelated to the Camera2D/Camera3D nodes).",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "csg",
+              name: "CSG",
+              description: "Required to use Constructive Solid Geometry nodes.",
+              enabled: true,
+              default: true,
+            },
+            // "cvtt" isn't included as "basis_universal" (which depends on it) isn't included either.
+            {
+              id: "dds",
+              name: "DDS",
+              description: "Required to load DirectDraw Surface images.",
+              enabled: true,
+              default: true,
+            },
+            // "denoise" isn't included as it's editor-only.
+            {
+              id: "enet",
+              name: "ENet",
+              description:
+                "Required to use NetworkedMultiplayerENet and NetworkedMultiplayerPeer.",
+              enabled: true,
+              default: true,
+            },
+            // "etcpak" isn't included as it's editor-only.
+            // TODO: Uncomment when Godot 4.3 is released.
+            // {
+            //   id: "fbx",
+            //   name: "fbx",
+            //   description:
+            //     "Required to load non-imported 3D scenes in the FBX format.",
+            //   enabled: true,
+            //   default: true,
+            // },
+            {
+              id: "freetype",
+              name: "FreeType",
+              description:
+                "Required to render DynamicFonts. Bitmap fonts can still be used without FreeType.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "gdscript",
+              name: "GDScript",
+              description: "Required to run scripts written in GDScript.",
+              enabled: true,
+              default: true,
+            },
+            // "glslang" isn't included as it's critical for the engine to work.
+            {
+              id: "gltf",
+              name: "GLTF",
+              description:
+                "Required to load non-imported 3D scenes in the glTF format.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "gridmap",
+              name: "GridMap",
+              description: "Required to use GridMap nodes.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "hdr",
+              name: "HDR",
+              description: "Required to load Radiance HDR images.",
+              enabled: true,
+              default: true,
+            },
+            // TODO: Uncomment when Godot 4.3 is released.
+            // {
+            //   id: "interactive_music",
+            //   name: "Interactive music",
+            //   description:
+            //     "Required to use interactive music (AudioStreamInteractive, AudioStreamPlaylist, AudioStreamSynchronized resources).",
+            //   enabled: true,
+            //   default: true,
+            // },
+            {
+              id: "jpg",
+              name: "JPG",
+              description: "Required to load JPEG images.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "jsonrpc",
+              name: "JSON-RPC",
+              description: "Required to use the JSONRPC class.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "ktx",
+              name: "KTX",
+              description: "Required to load Khronos KTX images.",
+              enabled: true,
+              default: true,
+            },
+            // 'lightmapper_rd' isn't included as it's editor-only.
+            {
+              id: "mbedtls",
+              name: "mbedTLS",
+              description:
+                "Required to make secure requests with HTTPClient, HTTPRequest and WebSocket classes.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "meshoptimizer",
+              name: "meshoptimizer",
+              description:
+                "Required for optimized SurfaceTool usage, including automatic LOD generation.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "minimp3",
+              name: "minimp3",
+              description:
+                "Required to play back MP3 sounds in AudioStreamPlayer.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "mobile_vr",
+              name: "Mobile VR",
+              description: "Required to use VR on Android and iOS.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "mono",
+              name: "Mono",
+              description:
+                "Required to run scripts written in C#. (Godot uses .NET in 4.x, despite the option name mentioning Mono.)",
+              enabled: false,
+              default: false,
+            },
+            {
+              id: "msdfgen",
+              name: "MSDFGen",
+              description:
+                "Required to use Multichannel Signed Distance Fields on fonts.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "multiplayer",
+              name: "Multiplayer",
+              description:
+                "Required to use the multiplayer replication system (RPCs).",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "navigation",
+              name: "Navigation",
+              description: "Required to use NavigationServer.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "noise",
+              name: "Noise",
+              description:
+                "Required to use Noise, FastNoiseLite and NoiseTextures that rely on it.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "ogg",
+              name: "OGG",
+              description:
+                "Required by `vorbis` for Ogg Vorbis audio playback. See also `stb_vorbis`.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "openxr",
+              name: "OpenXR",
+              description:
+                "Required to use virtual reality and augmented reality with OpenXR.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "raycast",
+              name: "Raycast",
+              description:
+                "Required to use occlusion culling. (This option is disabled by default in web exports to reduce binary size.)",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "regex",
+              name: "RegEx",
+              description:
+                "Required to parse regular expressions with the RegEx class.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "squish",
+              name: "Squish",
+              description:
+                "Required to decompress images compressed with Squish (including S3TC VRAM compression).",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "svg",
+              name: "SVG",
+              description: "Required to load non-imported SVG images.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "text_server_adv",
+              name: "Text Server Advanced",
+              description:
+                "Required to use TextServerAdvanced, which is the default TextServer. Supports right-to-left typesetting and complex scripts.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "text_server_fb",
+              name: "Text Server Fallback",
+              description:
+                "Required to use TextServerFallback. Does not support right-to-left typesetting or complex scripts. Enable this if disabling Text Server Advanced above; otherwise, no text will be displayed.",
+              enabled: false,
+              default: false,
+            },
+            {
+              id: "tga",
+              name: "TGA",
+              description: "Required to load TrueVision Targa images.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "theora",
+              name: "Theora",
+              description:
+                "Required to play back Ogg Theora videos in VideoStreamPlayer/VideoPlayer.",
+              enabled: true,
+              default: true,
+            },
+            // 'tinyexr' isn't included as it's editor-only.
+            {
+              id: "upnp",
+              name: "UPnP",
+              description:
+                "Required to use the UPNP classes for network discovery and automatic port forwarding.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "vhacd",
+              name: "V-HACD",
+              description:
+                "Required to create convex collision shapes in Mesh at runtime. (Not required if convex shapes were created on import.)",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "vorbis",
+              name: "Vorbis",
+              description:
+                "Required to play back Ogg Vorbis sounds in AudioStreamPlayer. See also `ogg`.",
+              enabled: true,
+              default: true,
+            },
+            // 'webp' isn't included as it's critical for the engine to work since 3.4.
+            {
+              id: "webrtc",
+              name: "WebRTC",
+              description: "Required to use WebRTC connections.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "websocket",
+              name: "WebSocket",
+              description: "Required to use WebSocket connections.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "webxr",
+              name: "WebXR",
+              description: "Required to run AR/VR on browsers.",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "zip",
+              name: "WebXR",
+              description:
+                "Required to use the ZIPReader and ZIPPacker classes (also requires Minizip to be enabled).",
+              enabled: true,
+              default: true,
+            },
+            {
+              id: "custom_modules",
+              name: "Custom modules path",
+              description:
+                "Specifies a path to a folder containing custom C++ modules to build. Useful for keeping custom modules separate from the Godot repository.",
+              text: true,
+              value: "",
+              default: "",
+              notModule: true,
+            },
+            // 'xatlas_unwrap' isn't included as it's editor-only.
+          ],
 
-        <div style="margin-top: 10px">
-          <button type="button" @click="downloadOptions()">Download</button>
-          <button type="button" @click="copyOptionsToClipboard()">Copy to clipboard</button>
-        </div>
-      </div class="preview">
-    </div>
+          // Returns the generated output file as a string.
+          // NOTE: This is displayed into a `x-html` directive so that line
+          // breaks display as expected. Make sure to escape HTML tags and
+          // validate user input to avoid XSS vulnerabilities!
+          generatedOptions() {
+            generated =
+              "# Generated using https://godot-build-options-generator.github.io\n\n";
 
-    <footer style="margin: 2rem 0 4rem 0; opacity: 0.8; text-align: center">
-      © 2020 Hugo Locurcio and contributors<br>
-      <a href="https://github.com/godot-build-options-generator/godot-build-options-generator.github.io">
-        Contribute to this generator on GitHub!
-      </a>
-    </footer>
-  </main>
-
-  <script>
-    function buildOptionsGenerator() {
-      return {
-        options: [
-          {
-            id: "extra_suffix",
-            name: "Extra suffix",
-            description: 'Changes the "custom_build" suffix. Useful for adding your "game_title" to a build.',
-            text: true,
-            value: "custom_build",
-            default: "custom_build",
-            notmodule: true,
-          },
-          {
-            id: "production",
-            name: "Production",
-            description: "Set defaults to build Godot for use in production.",
-            enabled: false,
-            default: false,
-            notmodule: true,
-          },
-          {
-            id: "disable_3d",
-            name: "Disable 3D",
-            description: "Disable 3D nodes for a smaller binary.",
-            enabled: false,
-            default: false,
-            notmodule: true,
-          },
-          {
-            id: "optimize",
-            name: "Optimize for size",
-            description: "Optimize the compiled binary for size instead of speed.",
-            enabled: false,
-            default: false,
-            notmodule: true,
-          },
-          {
-            id: "disable_advanced_gui",
-            name: "Disable advanced GUI",
-            description: "Disable advanced GUI nodes and behaviors such as Tree and GraphEdit.",
-            enabled: false,
-            default: false,
-            notmodule: true,
-          },
-          {
-            id: "deprecated",
-            name: "Enable deprecated features",
-            description: "Disabling deprecated features can make the binary slightly smaller.",
-            enabled: true,
-            default: true,
-            notmodule: true,
-          },
-          {
-            id: "minizip",
-            name: "Enable Minizip",
-            description: "Required to run projects that use data packed into a ZIP archive instead of a PCK.",
-            enabled: true,
-            default: true,
-            notmodule: true,
-          },
-          // 'astcenc' (4.x only) isn't included as it's editor-only.
-          {
-            id: 'basis_universal',
-            name: 'Basis Universal',
-            description: 'Required to load textures imported as Basis Universal (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'bmp',
-            name: 'BMP',
-            description: 'Required to load BMP images.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'bullet',
-            name: 'Bullet',
-            description: 'Advanced 3D physics engine (GodotPhysics is always compiled in, 3.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'camera',
-            name: 'Camera',
-            description: 'AR/VR camera support (unrelated to Camera nodes).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'csg',
-            name: 'CSG',
-            description: 'Required to use Constructive Solid Geometry nodes.',
-            enabled: true,
-            default: true,
-          },
-          // 'cvtt' isn't included as 'basis_universal' (which depends on it) isn't included either.
-          {
-            id: 'dds',
-            name: 'DDS',
-            description: 'Required to load DirectDraw Surface images.',
-            enabled: true,
-            default: true,
-          },
-          // 'denoise' isn't included as it's editor-only.
-          {
-            id: 'enet',
-            name: 'ENet',
-            description: 'Required to use NetworkedMultiplayerENet and NetworkedMultiplayerPeer.',
-            enabled: true,
-            default: true,
-          },
-          // 'etc'/'etcpak' isn't included as it's editor-only.
-          {
-            id: 'freetype',
-            name: 'FreeType',
-            description: 'Required to render DynamicFonts. Bitmap fonts can still be used without FreeType.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'gdnative',
-            name: 'GDNative',
-            description: 'Required to load GDNative libraries (3.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'gdscript',
-            name: 'GDScript',
-            description: 'Required to run scripts written in GDScript.',
-            enabled: true,
-            default: true,
-          },
-          // 'glslang' (4.x only) isn't included as it's critical for the engine to work.
-          {
-            id: 'gltf',
-            name: 'GLTF',
-            description: 'Required to load non-imported GLTF files. (Editor only in 3.x)',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'gridmap',
-            name: 'GridMap',
-            description: 'Required to use GridMap nodes.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'hdr',
-            name: 'HDR',
-            description: 'Required to load Radiance HDR images.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'jpg',
-            name: 'JPG',
-            description: 'Required to load JPEG images.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'jsonrpc',
-            name: 'JSON-RPC',
-            description: 'Required to use the JSONRPC class.',
-            enabled: true,
-            default: true,
-          },
-          // 'lightmapper_cpu' (3.x only) isn't included as it's editor-only.
-          // 'lightmapper_rd' (4.x only) isn't included as it's editor-only.
-          {
-            id: 'mbedtls',
-            name: 'mbedTLS',
-            description: 'Required to make HTTPS requests.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'meshoptimizer',
-            name: 'Mesh Optimizer',
-            description: 'Required for optimized SurfaceTool usage (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'minimp3',
-            name: 'minimp3',
-            description: 'Required to play back MP3 sounds in AudioStreamPlayer.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'mobile_vr',
-            name: 'Mobile VR',
-            description: 'Required to use VR on Android and iOS.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'mono',
-            name: 'Mono',
-            description: 'Required to run scripts written in C#.',
-            enabled: false,
-            default: false,
-          },
-          {
-            id: 'msdfgen',
-            name: 'MSDFGen',
-            description: 'Required to use Multichannel Signed Distance Fields on fonts (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'navigation',
-            name: 'Navigation',
-            description: 'Required to use NavigationServer.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'multiplayer',
-            name: 'Multiplayer',
-            description: 'Required to use the multiplayer replication system (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'noise',
-            name: 'Noise',
-            description: 'Required to use Noise, FastNoiseLite and NoiseTextures that rely on it (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'ogg',
-            name: 'OGG',
-            description: 'Required by `vorbis`. Required to play WebM (VP8) videos with sound in VideoPlayer (3.x only). See also `stb_vorbis`.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'opensimplex',
-            name: 'OpenSimplex',
-            description: 'Required to use OpenSimplexNoise and NoiseTextures that rely on it (3.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'openxr',
-            name: 'OpenXR',
-            description: 'Required to use OpenXR (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'opus',
-            name: 'Opus',
-            description: 'Required to play WebM (VP9) videos with sound (3.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'pvr',
-            name: 'PVR',
-            description: 'Required to load textures imported as PVRTC (3.x only).',
-            enabled: true,
-            default: true,
-          },
-          // 'raycast' isn't included as it's editor-only.
-          {
-            id: 'regex',
-            name: 'RegEx',
-            description: 'Required to use the RegEx class.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'squish',
-            name: 'Squish',
-            description: 'Required to decompress images compressed with Squish (including S3TC VRAM compression).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'stb_vorbis',
-            name: 'stb_vorbis',
-            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer (3.x only). Does not require `ogg` or `vorbis`.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'svg',
-            name: 'SVG',
-            description: 'Required to load non-imported SVG images as raster.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'text_server_adv',
-            name: 'Text Server Advanced',
-            description: 'Required to use TextServerAdvanced, which is the default TextServer (4.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'text_server_fb',
-            name: 'Text Server Fallback',
-            description: 'Required to use TextServerFallback (4.x only).',
-            enabled: false,
-            default: false,
-          },
-          {
-            id: 'tga',
-            name: 'TGA',
-            description: 'Required to load TrueVision Targa images.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'theora',
-            name: 'Theora',
-            description: 'Required to play back Ogg Theora videos in VideoStreamPlayer/VideoPlayer.',
-            enabled: true,
-            default: true,
-          },
-          // 'tinyexr' isn't included as it's editor-only.
-          {
-            id: 'upnp',
-            name: 'UPnP',
-            description: 'Required to use the UPNP classes for network discovery and automatic port forwarding.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'vhacd',
-            name: 'V-HACD',
-            description: 'Required to create convex shapes in Mesh at runtime.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'visual_script',
-            name: 'VisualScript',
-            description: 'Required to run scripts made using VisualScript (3.x only).',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'vorbis',
-            name: 'Vorbis',
-            description: 'Required to play back Ogg Vorbis sounds in AudioStreamPlayer (4.x only, not required on 3.x). Required to play WebM (VP8) videos with sound in VideoPlayer (3.x only). See also `ogg`.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'webm',
-            name: 'WebM',
-            description: 'Required to play WebM (VP8 and VP9) videos in VideoPlayer (3.x only). See also `ogg`, `vorbis` and `opus`.',
-            enabled: true,
-            default: true,
-          },
-          // 'webp' isn't included as it's critical for the engine to work since 3.4.
-          {
-            id: 'webrtc',
-            name: 'WebRTC',
-            description: 'Required to use WebRTC connections.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'websocket',
-            name: 'WebSocket',
-            description: 'Required to use WebSocket connections.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: 'webxr',
-            name: 'WebXR',
-            description: 'Required to run AR/VR on browsers.',
-            enabled: true,
-            default: true,
-          },
-          {
-            id: "custom_modules",
-            name: "Custom modules path",
-            description: 'Specifies a path to a folder containing custom C++ modules to build. Useful for keeping custom modules separate from the Godot repository.',
-            text: true,
-            value: "",
-            default: "",
-            notmodule: true,
-          },
-          // 'xatlas_unwrap' isn't included as it's editor-only.
-        ],
-
-        // Returns the generated output file as a string.
-        // NOTE: This is displayed into a `x-html` directive so that line
-        // breaks display as expected. Make sure to escape HTML tags and
-        // validate user input to avoid XSS vulnerabilities!
-        generatedOptions() {
-          generated = '# Generated using https://godot-build-options-generator.github.io\n\n';
-
-          this.options.forEach((option) => {
-            if (option.text) {
-              if (option.value != option.default && option.enabled) {
-                generated += `${option.id} = "${option.value}"\n`
-              }
-            }
-            else if (option.enabled !== option.default) {
-              if (option.notmodule != undefined) {
-                if (option.id === "optimize") {
-                  generated += `${option.id} = "${option.enabled ? 'size' : 'speed'}"\n`;
-                } else {
-                  generated += `${option.id} = "${option.enabled ? 'yes' : 'no'}"\n`;
+            this.options.forEach((option) => {
+              if (option.text) {
+                if (option.value != option.default && option.enabled) {
+                  generated += `${option.id} = "${option.value}"\n`;
                 }
-              } else {
-                generated += `module_${option.id}_enabled = "${option.enabled ? 'yes' : 'no'}"\n`;
+              } else if (option.enabled !== option.default) {
+                if (option.notModule != undefined) {
+                  if (option.id === "optimize") {
+                    generated += `${option.id} = "${option.enabled ? "size" : "speed"}"\n`;
+                  } else if (option.id === "precision") {
+                    generated += `${option.id} = "${option.enabled ? "double" : "single"}"\n`;
+                  } else {
+                    generated += `${option.id} = "${option.enabled ? "yes" : "no"}"\n`;
+                  }
+                } else {
+                  generated += `module_${option.id}_enabled = "${option.enabled ? "yes" : "no"}"\n`;
+                }
               }
-            }
-          })
+            });
 
-          return generated;
-        },
+            return generated;
+          },
 
-        downloadOptions() {
-          const blob = new Blob(
-            [this.generatedOptions()],
-            { type: 'text/plain', oneTimeOnly: true }
-          );
-          const elem = window.document.createElement('a');
-          elem.href = window.URL.createObjectURL(blob);
-          elem.download = 'custom.py';
-          document.body.appendChild(elem);
-          elem.click();
-          document.body.removeChild(elem);
-        },
+          downloadOptions() {
+            const blob = new Blob([this.generatedOptions()], {
+              type: "text/plain",
+              oneTimeOnly: true,
+            });
+            const elem = window.document.createElement("a");
+            elem.href = window.URL.createObjectURL(blob);
+            elem.download = "custom.py";
+            document.body.appendChild(elem);
+            elem.click();
+            document.body.removeChild(elem);
+          },
 
-        copyOptionsToClipboard() {
-          navigator.clipboard.writeText(this.generatedOptions());
-        },
-      };
-    }
-  </script>
-</body>
-
+          copyOptionsToClipboard() {
+            navigator.clipboard.writeText(this.generatedOptions());
+          },
+        };
+      }
+    </script>
+  </body>
 </html>

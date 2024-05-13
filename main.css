@@ -24,7 +24,9 @@ body {
   background-color: var(--body-background-color);
   color: var(--body-color);
   /* Use a modern font stack inspired by Bootstrap 4. */
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
